@@ -7,15 +7,15 @@
 **.env*
 
 # Files to ignore in floan-contract
-floan-contract/cache
-floan-contract/artifacts
+packages/floan-contract/cache
+packages/floan-contract/artifacts
 
 # Files to ignore in floan-web
-floan-web/build
-floan-web/.env*
-floan-web/npm-debug.log*
-floan-web/yarn-debug.log*
-floan-web/yarn-error.log*
+packages/floan-web/build
+packages/floan-web/.env*
+packages/floan-web/npm-debug.log*
+packages/floan-web/yarn-debug.log*
+packages/floan-web/yarn-error.log*
 
 # Files to ignore in floan-backend
-floan-backend/dist*
+packages/floan-backend/dist*
