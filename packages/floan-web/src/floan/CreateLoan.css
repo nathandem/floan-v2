@@ -1,0 +1,22 @@
+.CreateLoan__container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    height: 100vh;
+}
+
+.CreateLoan__title {
+    text-align: center;
+}
+
+.CreateLoan__input {
+    padding: 1rem 3rem;
+    width: 15rem;
+}
+
+.CreateLoan__button {
+    display: flex;
+    justify-content: center;
+}

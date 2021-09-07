@@ -1,0 +1,21 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Common files to ignore
+**/node_modules
+**/coverage
+**.DS_Store
+**.env*
+
+# Files to ignore in floan-contract
+packages/floan-contract/cache
+packages/floan-contract/artifacts
+
+# Files to ignore in floan-web
+packages/floan-web/build
+packages/floan-web/.env*
+packages/floan-web/npm-debug.log*
+packages/floan-web/yarn-debug.log*
+packages/floan-web/yarn-error.log*
+
+# Files to ignore in floan-backend
+packages/floan-backend/dist*

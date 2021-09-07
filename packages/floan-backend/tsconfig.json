@@ -1,0 +1,25 @@
+{
+    /* Visit https://aka.ms/tsconfig.json to read more about this file */
+    "exclude": [
+        "./node_modules",
+    ],
+    "include": [
+        "src/**/*",
+        "tests/**/*"
+    ],
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "outDir": "./dist",
+        "rootDirs": [
+            "./src",
+            "./abis"
+        ],
+        "strict": false,
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "noImplicitAny": false,
+        "resolveJsonModule": true,
+        "skipLibCheck": true
+    }
+}

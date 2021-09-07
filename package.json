@@ -1,0 +1,19 @@
+{
+  "name": "floan",
+  "version": "1.0.0",
+  "description": "Uncollateralized loans made real",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+      "web:start": "yarn workspace floan-web start",
+      "contract:compile": "yarn workspace floan-contract compile && node scripts/copyAbi.js",
+      "contract:deploy:localhost": "yarn workspace floan-contract deploy:localhost",
+      "backend:start": "yarn workspace floan-backend dev"
+  },
+  "workspaces": [
+      "packages/floan-contract",
+      "packages/floan-backend",
+      "packages/floan-web"
+  ],
+  "dependencies": {}
+}
