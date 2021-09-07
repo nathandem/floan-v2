@@ -13,10 +13,10 @@ const fs = require('fs');
 
 // constants
 
-const HARDHAT_ARTIFACT_DEFAULT_PATH_FOR_FLOAN_CONTRACT = './packages/floan-contract/artifacts/contracts/Floan.sol/Floan.json';
-const FLOAN_BACKEND_ABIS_PATH = './packages/floan-backend/abis/Floan.json';
+const HARDHAT_ARTIFACT_DEFAULT_PATH_FOR_FLOAN_CONTRACT = './apps/floan-contract/artifacts/contracts/Floan.sol/Floan.json';
+const FLOAN_BACKEND_ABIS_PATH = './apps/floan-backend/abis/Floan.json';
 // note: by default create-react-app doesn't allow import outside of `src`, let's stick with that
-const FLOAN_WEB_ABIS_PATH = './packages/floan-web/src/abis/Floan.json';
+const FLOAN_WEB_ABIS_PATH = './apps/floan-web/src/abis/Floan.json';
 
 
 // logic

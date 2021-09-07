@@ -5,17 +5,18 @@
 **/coverage
 **.DS_Store
 **.env*
+.yarn/*
 
 # Files to ignore in floan-contract
-packages/floan-contract/cache
-packages/floan-contract/artifacts
+apps/floan-contract/cache
+apps/floan-contract/artifacts
 
 # Files to ignore in floan-web
-packages/floan-web/build
-packages/floan-web/.env*
-packages/floan-web/npm-debug.log*
-packages/floan-web/yarn-debug.log*
-packages/floan-web/yarn-error.log*
+apps/floan-web/build
+apps/floan-web/.env*
+apps/floan-web/npm-debug.log*
+apps/floan-web/yarn-debug.log*
+apps/floan-web/yarn-error.log*
 
 # Files to ignore in floan-backend
-packages/floan-backend/dist*
+apps/floan-backend/dist*

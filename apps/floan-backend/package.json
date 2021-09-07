@@ -1,5 +1,5 @@
 {
-  "name": "floan-backend",
+  "name": "@floan/backend",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -13,6 +13,6 @@
     "typescript": "^4.4.2"
   },
   "scripts": {
-    "dev": "npx tsc && node dist/floan-backend/src/server.js"
+    "dev": "tsc && node dist/src/server.js"
   }
 }
