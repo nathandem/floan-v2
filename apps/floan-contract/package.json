@@ -12,10 +12,13 @@
     "hardhat": "^2.5.0"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.2.0"
+    "@openzeppelin/contracts": "^4.2.0",
+    "env-cmd": "^10.1.0"
   },
   "scripts": {
+    "startChain": "hardhat node",
     "compile": "hardhat compile",
-    "deploy:localhost": "hardhat run scripts/deploy.js --network localhost"
+    "deploy:local": "env-cmd hardhat run scripts/deploy.js --network localhost",
+    "deploy:kovan": "env-cmd hardhat run scripts/deploy.js --network kovan"
   }
 }

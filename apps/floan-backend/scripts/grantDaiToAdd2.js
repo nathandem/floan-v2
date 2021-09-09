@@ -1,5 +1,5 @@
 const { ethers } = require("ethers");
-const ERC20Abi = require('../../abis/ERC20.json');
+const ERC20Abi = require('../abis/ERC20.json');
 
 
 const ADDRESS_ONE = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266';

@@ -2314,6 +2314,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@floan/backend@workspace:apps/floan-backend"
   dependencies:
+    "@types/node": ^16.9.0
+    env-cmd: ^10.1.0
     ethers: ^5.4.6
     fastify: ^3.19.2
     postgres: ^1.0.2
@@ -2330,6 +2332,7 @@ __metadata:
     "@nomiclabs/hardhat-waffle": ^2.0.1
     "@openzeppelin/contracts": ^4.2.0
     chai: ^4.3.4
+    env-cmd: ^10.1.0
     ethereum-waffle: ^3.4.0
     ethers: ^5.4.2
     hardhat: ^2.5.0
@@ -2348,6 +2351,7 @@ __metadata:
     axios: ^0.21.1
     ethers: ^5.4.2
     gh-pages: ^3.2.3
+    prop-types: ^15.7.2
     react: ^17.0.2
     react-dom: ^17.0.2
     react-scripts: 4.0.3
@@ -3586,7 +3590,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*":
+"@types/node@npm:*, @types/node@npm:^16.9.0":
   version: 16.9.0
   resolution: "@types/node@npm:16.9.0"
   checksum: cb210bcfe201d6506f1ace9e940cf45307c1fc845ad1e67bb4a2dc39a2e3441382973e96b78568844c6f324cd0d2dddcb07639313d75cdb1ac5776c9255349fb
@@ -7001,7 +7005,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^4.1.1":
+"commander@npm:^4.0.0, commander@npm:^4.1.1":
   version: 4.1.1
   resolution: "commander@npm:4.1.1"
   checksum: d7b9913ff92cae20cb577a4ac6fcc121bd6223319e54a40f51a14740a681ad5c574fd29a57da478a5f234a6fa6c52cbf0b7c641353e03c648b1ae85ba670b977
@@ -8537,6 +8541,18 @@ __metadata:
   version: 2.2.0
   resolution: "entities@npm:2.2.0"
   checksum: 19010dacaf0912c895ea262b4f6128574f9ccf8d4b3b65c7e8334ad0079b3706376360e28d8843ff50a78aabcb8f08f0a32dbfacdc77e47ed77ca08b713669b3
+  languageName: node
+  linkType: hard
+
+"env-cmd@npm:^10.1.0":
+  version: 10.1.0
+  resolution: "env-cmd@npm:10.1.0"
+  dependencies:
+    commander: ^4.0.0
+    cross-spawn: ^7.0.0
+  bin:
+    env-cmd: bin/env-cmd.js
+  checksum: efef55074250f14cfc0b80c98dd98f1f056a80e1f3c7db14097ceefdd2d56c766bbb83b54c22932112707f41b36ce2e923f8015d69e62a75c12d98640b972e75
   languageName: node
   linkType: hard
 

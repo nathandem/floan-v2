@@ -24,7 +24,7 @@ fastify.get('/getloans', async (request, reply) => {
         status: loan.status,
     }));
 
-    reply.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+    reply.header('Access-Control-Allow-Origin', process.env.WEB_APP_ORIGIN);
     reply.send({ loans: parsedLoans });
 
     return reply;

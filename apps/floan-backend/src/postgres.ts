@@ -2,12 +2,11 @@ import postgres from 'postgres';
 
 
 export const sql = postgres({
-    host: 'localhost',
-    port: 5432,
-    // TODO: replace following values with env variables (process.env.ENV_VARIABLE)
-    database: 'test',
-    username: 'test',
-    password: 'test',
+    host: process.env.POSTGRES_HOST,
+    port: process.env.POSTGRES_PORT,
+    database: process.env.POSTGRES_DB,
+    username: process.env.POSTGRES_USERNAME,
+    password: process.env.POSTGRES_PASSWORD,
 });
 
 
@@ -37,5 +36,5 @@ async function createLoanTableIfNotExist() {
 
 export async function deployTablesIfNotAlreadyDeployed() {
     await createLoanTableIfNotExist();
-    // add other tables here... (before moving a more resilient system with migrations)
+    // add other tables here... (before moving to a more resilient system with migrations)
 }

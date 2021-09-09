@@ -5,8 +5,10 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "contract:startChain": "yarn workspace @floan/contract startChain",
     "contract:compile": "yarn workspace @floan/contract compile && node scripts/copyAbi.js",
-    "contract:deploy:localhost": "yarn run contract:compile && yarn workspace @floan/contract deploy:localhost",
+    "contract:deploy:local": "yarn contract:compile && yarn workspace @floan/contract deploy:local",
+    "contract:deploy:kovan": "yarn contract:compile && yarn workspace @floan/contract deploy:kovan",
     "web:start": "yarn workspace @floan/web start",
     "backend:start": "yarn workspace @floan/backend dev"
   },

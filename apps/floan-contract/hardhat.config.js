@@ -2,10 +2,8 @@ require("@nomiclabs/hardhat-waffle");
 
 
 // load private data to use in deployment
-const ALCHEMY_MAINNET_API_KEY = process.env.ALCHEMY_MAINNET_API_KEY;
 const ALCHEMY_KOVAN_API_KEY = process.env.ALCHEMY_KOVAN_API_KEY;
-const METAMASK_MNEMONICS = process.env.METAMASK_MNEMONICS;
-const METAMASK_ACCOUNT_1_PRIVATE_KEY = process.env.METAMASK_ACCOUNT_1_PRIVATE_KEY;
+const DEPLOYMENT_ACCOUNT = process.env.DEPLOYMENT_ACCOUNT;
 
 // https://hardhat.org/config/
 /**
@@ -31,7 +29,7 @@ module.exports = {
         kovan: {
             url: `https://eth-kovan.alchemyapi.io/v2/${ALCHEMY_KOVAN_API_KEY}`,
             // accounts: { mnemonic: METAMASK_MNEMONICS },
-            accounts: [`0x${METAMASK_ACCOUNT_1_PRIVATE_KEY}`],
+            accounts: [`0x${DEPLOYMENT_ACCOUNT}`],
         },
         // ropsten: {
         //     url: `https://eth-ropsten.alchemyapi.io/v2/${ALCHEMY_API_KEY}/`,

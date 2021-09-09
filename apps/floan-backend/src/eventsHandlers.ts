@@ -3,11 +3,8 @@ import { sql } from './postgres';
 import floanAbi from '../abis/Floan.json';
 
 
-const NODE_URL = 'http://localhost:8545';  // TODO: get this value from an environment variable
-const provider = new ethers.providers.JsonRpcProvider(NODE_URL);
-
-const FLOAN_ADDRESS = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';  // TODO: get this value from an environment variable
-const floanContract = new ethers.Contract(FLOAN_ADDRESS, floanAbi, provider);
+const provider = new ethers.providers.JsonRpcProvider(process.env.NODE_URL);
+const floanContract = new ethers.Contract(process.env.FLOAN_ADDRESS, floanAbi, provider);
 
 function eventHandlers() {
     const LOAN_STATES = {
