@@ -62,7 +62,7 @@ contract Floan {
         Credit storage credit = credits[_loanId];
 
         require(_loanId <= lastLoanId, "This loan doesn't exist");
-        require(credit.state == State.Pending, "The loan must not already have been funded");
+        require(credit.state == State.Pending, "This loan has already been funded");
         require(msg.sender != credit.borrower, "You can't fund a loan you initiated");
 
         bool success = token.transferFrom(msg.sender, address(this), credit.amount);
