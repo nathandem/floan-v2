@@ -18,9 +18,15 @@
                 "internalType": "uint256",
                 "name": "loanId",
                 "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "lastActionBLock",
+                "type": "uint256"
             }
         ],
-        "name": "LogClosedLoan",
+        "name": "LoanClosed",
         "type": "event"
     },
     {
@@ -41,11 +47,11 @@
             {
                 "indexed": false,
                 "internalType": "uint256",
-                "name": "startBlock",
+                "name": "lastActionBlock",
                 "type": "uint256"
             }
         ],
-        "name": "LogFundLoan",
+        "name": "LoanFunded",
         "type": "event"
     },
     {
@@ -56,22 +62,15 @@
                 "internalType": "uint256",
                 "name": "loanId",
                 "type": "uint256"
-            }
-        ],
-        "name": "LogLoanWithdrawn",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
+            },
             {
                 "indexed": false,
                 "internalType": "uint256",
-                "name": "loanId",
+                "name": "lastActionBLock",
                 "type": "uint256"
             }
         ],
-        "name": "LogPaybackLoan",
+        "name": "LoanPaidBack",
         "type": "event"
     },
     {
@@ -106,9 +105,34 @@
                 "internalType": "uint256",
                 "name": "duration",
                 "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "lastActionBlock",
+                "type": "uint256"
             }
         ],
-        "name": "LogRequestLoan",
+        "name": "LoanRequested",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "loanId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "lastActionBLock",
+                "type": "uint256"
+            }
+        ],
+        "name": "LoanWithdrawn",
         "type": "event"
     },
     {
@@ -176,7 +200,7 @@
                     },
                     {
                         "internalType": "uint256",
-                        "name": "startBlock",
+                        "name": "lastActionBlock",
                         "type": "uint256"
                     },
                     {

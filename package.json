@@ -10,7 +10,7 @@
     "contract:deploy:local": "yarn contract:compile && yarn workspace @floan/contract deploy:local",
     "contract:deploy:kovan": "yarn contract:compile && yarn workspace @floan/contract deploy:kovan",
     "web:start": "yarn workspace @floan/web start",
-    "backend:start": "yarn workspace @floan/backend dev"
+    "backend:start": "yarn workspace @floan/backend start:dev"
   },
   "workspaces": [
     "apps/floan-contract",

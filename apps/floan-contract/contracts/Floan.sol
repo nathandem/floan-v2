@@ -9,7 +9,7 @@ contract Floan {
     // STATE
     uint256 public constant BLOCKS_PER_DAY = 6400;  // assuming block creation averages 13.5 sec
 
-    enum State { Requested, Funded, Withdrawn, PayedBack, Closed, Slashed }
+    enum State { Requested, Funded, Withdrawn, PayedBack, Closed }
     struct Credit {
         address borrower;
         address lender;

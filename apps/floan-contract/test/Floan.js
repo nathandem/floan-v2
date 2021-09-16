@@ -5,13 +5,12 @@ const { ethers } = require("hardhat");
 const ERC20 = require('../artifacts/contracts/Token.sol/Token.json');
 
 
-const FLOAN_STATUSES = {
+const FLOAN_STATES = {
     Requested: 0,
     Funded: 1,
     Withdrawn: 2,
     PayedBack: 3,
     Closed: 4,
-    Slashed: 5,
 };
 
 describe("Floan", () => {
@@ -63,7 +62,7 @@ describe("Floan", () => {
             await expect(floan.requestLoan(AMOUNT, REPAY_AMOUNT, ONE_YEAR_IN_DAYS)).to.emit(floan, "LoanRequested").withArgs(2, owner.address, AMOUNT, REPAY_AMOUNT, ONE_YEAR_IN_DAYS, prevBlockNb + 2);
         });
 
-        it("Credit sucessfully created with Requested status when all conditions are met", async () => {
+        it("Credit sucessfully created with Requested state when all conditions are met", async () => {
             const prevBlockNb = await ethers.provider.getBlockNumber();
 
             await expect(floan.requestLoan(AMOUNT, REPAY_AMOUNT, ONE_YEAR_IN_DAYS)).to.emit(floan, "LoanRequested").withArgs(1, owner.address, AMOUNT, REPAY_AMOUNT, ONE_YEAR_IN_DAYS, prevBlockNb +1);
@@ -74,7 +73,7 @@ describe("Floan", () => {
             expect(credit.repayAmount).to.eq(REPAY_AMOUNT);
             expect(credit.durationInDays).to.eq(ONE_YEAR_IN_DAYS);
             expect(credit.lastActionBlock).to.eq(prevBlockNb + 1);
-            expect(credit.state).to.eq(FLOAN_STATUSES.Requested);
+            expect(credit.state).to.eq(FLOAN_STATES.Requested);
         });
     });
 
@@ -129,7 +128,7 @@ describe("Floan", () => {
             const credit = await floan.getCredit(1);
 
             expect(credit.lender).to.equal(alice.address);
-            expect(credit.state).to.equal(FLOAN_STATUSES.Funded);
+            expect(credit.state).to.equal(FLOAN_STATES.Funded);
             expect(credit.lastActionBlock).to.equal(prevBlockNb + 1);
         });
     });

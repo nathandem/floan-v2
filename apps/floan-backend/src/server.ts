@@ -6,10 +6,10 @@ import eventHandlers from './eventsHandlers';
 import fastifyLib from 'fastify';
 const fastify = fastifyLib({ logger: false });
 
-// TODO: add dynamic filtering based on the `status` of loans
+// TODO: add dynamic filtering based on the `state` of loans
 fastify.get('/getloans', async (request, reply) => {
     const loans = await sql`
-        select loan_id, borrower, lender, amount_in_fiat, repay_amount_in_fiat, duration_in_days, start_block, status
+        select loan_id, borrower, lender, amount_in_fiat, repay_amount_in_fiat, duration_in_days, state
         from loan;
     `;
 
@@ -20,8 +20,7 @@ fastify.get('/getloans', async (request, reply) => {
         amountInFiat: loan.amount_in_fiat,
         repayAmountInFiat: loan.repay_amount_in_fiat,
         durationInDays: loan.duration_in_days,
-        startBlock: loan.start_block,
-        status: loan.status,
+        state: loan.state,
     }));
 
     reply.header('Access-Control-Allow-Origin', process.env.WEB_APP_ORIGIN);

@@ -28,8 +28,12 @@ async function createLoanTableIfNotExist() {
             amount_in_fiat varchar(30) not null,
             repay_amount_in_fiat varchar(30) not null,
             duration_in_days int null,
-            start_block int,
-            status varchar(20) not null
+            request_block int,
+            fund_block int,
+            withdraw_block int,
+            payback_block int,
+            close_block int,
+            state varchar(20) not null
         );
     `;
 }

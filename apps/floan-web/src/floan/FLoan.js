@@ -16,7 +16,7 @@ import { getLoans } from '../helpers/backendQueries';
 const VIEWS = {
     HOME: 'home',
     CREATE_LOAN: 'create_loan',
-    LIST_PENDING_LOANS: 'list_pending_loans',
+    LIST_REQUESTED_LOANS: 'list_requested_loans',
     LIST_FUNDED_LOANS: 'list_funded_loans',
     BORROWER_DRAWN_LOANS_VIEW: 'borrower_drawn_loans_view',
     LIST_LOANS_TO_RECOUP_VIEW: 'list_loans_to_recoup_view',
@@ -44,12 +44,12 @@ export default class FLoan extends React.PureComponent {
         // const tokenAddress = '0x00EC3CCd71CF19e27392c5b21A9f5fa632B43768';  // on Kovan
         const tokenContract = new ethers.Contract(tokenAddress, erc20Abi, this.props.signer);
 
-        floanContract.on('LogRequestLoan', (loanId, borrower, amount, repaymentAmount, duration, event) => {
-            console.log(`LogRequestLoan event`);
+        floanContract.on('LoanRequested', (loanId, borrower, amountInWeiLikeDenomination, repayAmountInWeiLikeDenomination, durationInDays, lastActionBlock, event) => {
+            console.log(`LoanRequested event`);
             console.log(event);
         });
 
-        floanContract.on('LogFundLoan', (loanId, lender, startBlock, event) => {
+        floanContract.on('LoanFunded', (loanId, lender, lastActionBlock, event) => {
             console.log(`LogFundLoan event`);
             console.log(event);
         });
@@ -72,10 +72,10 @@ export default class FLoan extends React.PureComponent {
         this.setState({ activeView: VIEWS.CREATE_LOAN });
     }
 
-    goToListPendingLoansView = async () => {
+    goToListRequestedLoansView = async () => {
         const loans = await getLoans();
         console.log(loans);
-        this.setState({ activeView: VIEWS.LIST_PENDING_LOANS, loans });
+        this.setState({ activeView: VIEWS.LIST_REQUESTED_LOANS, loans });
     }
 
     goToListFundedLoansView = async () => {
@@ -176,7 +176,7 @@ export default class FLoan extends React.PureComponent {
         if (this.state.activeView === VIEWS.HOME) {
             activeView = <Home
                 goToCreateLoanView={this.goToCreateLoanView}
-                goToListPendingLoansView={this.goToListPendingLoansView}
+                goToListRequestedLoansView={this.goToListRequestedLoansView}
                 goToListFundedLoansView={this.goToListFundedLoansView}
                 goToBorrowerDrawnLoansView={this.goToBorrowerDrawnLoansView}
                 goToLoansToRecoupView={this.goToLoansToRecoupView}
@@ -187,12 +187,12 @@ export default class FLoan extends React.PureComponent {
                 goToHomeView={this.goToHomeView}
                 createLoanOffer={this.createLoanOffer}
             />;
-        } else if (this.state.activeView === VIEWS.LIST_PENDING_LOANS) {
+        } else if (this.state.activeView === VIEWS.LIST_REQUESTED_LOANS) {
             activeView = <LoanList
                 goToHomeView={this.goToHomeView}
                 loans={this.state.loans.filter(loan => (
                     loan.borrower.toLowerCase() !== this.props.signerAddress.toLowerCase()
-                    && loan.status === 'PENDING')
+                    && loan.state === 'REQUESTED')
                 )}
                 action={this.fundLoan}
             />;
@@ -201,7 +201,7 @@ export default class FLoan extends React.PureComponent {
                 goToHomeView={this.goToHomeView}
                 loans={this.state.loans.filter(loan => (
                     loan.borrower.toLowerCase() === this.props.signerAddress.toLowerCase()
-                    && loan.status === 'FUNDED'
+                    && loan.state === 'FUNDED'
                 ))}
                 action={this.withdrawLoan}
             />;
@@ -211,7 +211,7 @@ export default class FLoan extends React.PureComponent {
                 goToHomeView={this.goToHomeView}
                 borrowerLoans={this.state.loans.filter(loan => (
                     loan.borrower.toLowerCase() === this.props.signerAddress.toLowerCase()
-                    && loan.status === 'WITHDRAWN'
+                    && loan.state === 'WITHDRAWN'
                 ))}
                 action={this.paybackLoan}
             />;
@@ -221,7 +221,7 @@ export default class FLoan extends React.PureComponent {
                 loans={this.state.loans.filter(loan => (
                     loan.lender
                     && loan.lender.toLowerCase() === this.props.signerAddress.toLowerCase()
-                    && loan.status === 'PAYED_BACK'
+                    && loan.state === 'PAYED_BACK'
                 ))}
                 action={this.recoupLoan}
             />;

@@ -8,16 +8,15 @@ const floanContract = new ethers.Contract(process.env.FLOAN_ADDRESS, floanAbi, p
 
 function eventHandlers() {
     const LOAN_STATES = {
-        PENDING: 'PENDING',
+        REQUESTED: 'REQUESTED',
         FUNDED: 'FUNDED',
         WITHDRAWN: 'WITHDRAWN',
         PAYED_BACK: 'PAYED_BACK',
         CLOSED: 'CLOSED',
-        SLASHED: 'SLASHED',
     };
 
-    floanContract.on('LogRequestLoan', async (loanId, borrower, amountInWeiLikeDenomination, repayAmountInWeiLikeDenomination, durationInDays, event) => {
-        console.log(`LogRequestLoan event`);
+    floanContract.on('LoanRequested', async (loanId, borrower, amountInWeiLikeDenomination, repayAmountInWeiLikeDenomination, durationInDays, lastActionBlock, event) => {
+        console.log(`LoanRequested event`);
     
         // transform amounts from wei like denomination (stored in ethers's BigNumber type) to amounts in fiat (stored in regular integers)
         const amountInFiat = ethers.utils.formatEther(amountInWeiLikeDenomination);
@@ -27,55 +26,58 @@ function eventHandlers() {
         // use `on conflict (...) do nothing` to avoid issue
         const res = await sql`
             insert into loan (
-                loan_id, borrower, amount_in_fiat, repay_amount_in_fiat, duration_in_days, status
+                loan_id, borrower, amount_in_fiat, repay_amount_in_fiat, duration_in_days, request_block, state
             ) values (
-                ${loanId}, ${borrower}, ${amountInFiat}, ${repayAmountInFiat}, ${durationInDays}, ${LOAN_STATES.PENDING}
+                ${loanId}, ${borrower}, ${amountInFiat}, ${repayAmountInFiat}, ${durationInDays}, ${lastActionBlock}, ${LOAN_STATES.REQUESTED}
             ) on conflict (loan_id) do nothing;
         `;
         console.log(res);
     });
-    
-    floanContract.on('LogFundLoan', async (loanId, lender, startBlock, event) => {
-        console.log(`LogFundLoan event`);
+
+    floanContract.on('LoanFunded', async (loanId, lender, lastActionBlock, event) => {
+        console.log(`LoanFunded event`);
     
         const res = await sql`
             update loan
             set lender = ${lender},
-                start_block = ${startBlock},
-                status = ${LOAN_STATES.FUNDED}
+                fund_block = ${lastActionBlock},
+                state = ${LOAN_STATES.FUNDED}
             where loan_id = ${loanId};
         `;
         console.log(res);
     });
-    
-    floanContract.on('LogLoanWithdrawn', async (loanId, event) => {
-        console.log(`LogLoanWithdrawn event`);
+
+    floanContract.on('LoanWithdrawn', async (loanId, lastActionBlock, event) => {
+        console.log(`LoanWithdrawn event`);
     
         const res = await sql`
             update loan
-            set status = ${LOAN_STATES.WITHDRAWN}
+            set withdraw_block = ${lastActionBlock},
+                state = ${LOAN_STATES.WITHDRAWN}
             where loan_id = ${loanId};
         `;
         console.log(res);
     });
-    
-    floanContract.on('LogPaybackLoan', async (loanId, event) => {
-        console.log(`LogPaybackLoan event`);
+
+    floanContract.on('LoanPaidBack', async (loanId, lastActionBlock, event) => {
+        console.log(`LoanPaidBack event`);
     
         const res = await sql`
             update loan
-            set status = ${LOAN_STATES.PAYED_BACK}
+            set payback_block = ${lastActionBlock},
+                state = ${LOAN_STATES.PAYED_BACK}
             where loan_id = ${loanId};
         `;
         console.log(res);
     });
-    
-    floanContract.on('LogClosedLoan', async (loanId, event) => {
-        console.log(`LogClosedLoan event`);
+
+    floanContract.on('LoanClosed', async (loanId, lastActionBlock, event) => {
+        console.log(`LoanClosed event`);
     
         const res = await sql`
             update loan
-            set status = ${LOAN_STATES.CLOSED}
+            set close_block = ${lastActionBlock},
+                state = ${LOAN_STATES.CLOSED}
             where loan_id = ${loanId};
         `;
         console.log(res);
