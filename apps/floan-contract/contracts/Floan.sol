@@ -6,17 +6,10 @@ import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 
 
 contract Floan {
-    // EVENTS
-    event LogRequestLoan(uint loanId, address borrower, uint amount, uint repayAmount, uint duration);
-    event LogFundLoan(uint loanId, address lender, uint startBlock);
-    event LogLoanWithdrawn(uint loanId);
-    event LogPaybackLoan(uint loanId);
-    event LogClosedLoan(uint loanId);
-
     // STATE
     uint256 public constant BLOCKS_PER_DAY = 6400;  // assuming block creation averages 13.5 sec
 
-    enum State { Pending, Funded, Withdrawn, PayedBack, Closed, Slashed }
+    enum State { Requested, Funded, Withdrawn, PayedBack, Closed, Slashed }
     struct Credit {
         address borrower;
         address lender;
@@ -24,12 +17,22 @@ contract Floan {
         uint256 amount;
         uint256 repayAmount;
         uint256 durationInDays;
-        uint256 startBlock;
+        // backend stores all blocks, e.g. the block coming from LoanRequested is stored as `requestBlock`
+        // or the block coming in LoanClosed is persisted as `closeBlock`
+        uint256 lastActionBlock;
         State state;
     }
     mapping(uint => Credit) credits;
     IERC20 public token;
     uint256 lastLoanId;
+
+    // EVENTS
+    // note: event names are aligned with the state
+    event LoanRequested(uint loanId, address borrower, uint amount, uint repayAmount, uint duration, uint lastActionBlock);
+    event LoanFunded(uint loanId, address lender, uint lastActionBlock);
+    event LoanWithdrawn(uint loanId, uint lastActionBLock);
+    event LoanPaidBack(uint loanId, uint lastActionBLock);
+    event LoanClosed(uint loanId, uint lastActionBLock);
 
     constructor(address _token) {
         token = IERC20(_token);
@@ -41,17 +44,20 @@ contract Floan {
         require(_durationInDays >= 1, "The duration of the loan can't be shorter than one day");
 
         lastLoanId++;
+        uint lastActionBlock = block.number;
+        address borrower = msg.sender;
+
         credits[lastLoanId] = Credit({
-            borrower: msg.sender,
+            borrower: borrower,
             lender: address(0),
             amount: _amount,
             repayAmount: _repayAmount,
             durationInDays: _durationInDays,
-            startBlock: 0,
-            state: State.Pending
+            lastActionBlock: lastActionBlock,
+            state: State.Requested
         });
 
-        emit LogRequestLoan(lastLoanId, msg.sender, _amount, _repayAmount, _durationInDays);
+        emit LoanRequested(lastLoanId, borrower, _amount, _repayAmount, _durationInDays, lastActionBlock);
     }
 
     /* 
@@ -62,17 +68,17 @@ contract Floan {
         Credit storage credit = credits[_loanId];
 
         require(_loanId <= lastLoanId, "This loan doesn't exist");
-        require(credit.state == State.Pending, "This loan has already been funded");
+        require(credit.state == State.Requested, "This loan has already been funded");
         require(msg.sender != credit.borrower, "You can't fund a loan you initiated");
 
         bool success = token.transferFrom(msg.sender, address(this), credit.amount);
         require(success, "The transfer of funds failed, do you have enough funds?");
 
         credit.lender = msg.sender;
-        credit.startBlock = block.number;
+        credit.lastActionBlock = block.number;
         credit.state = State.Funded;
 
-        emit LogFundLoan(_loanId, credit.lender, credit.startBlock);
+        emit LoanFunded(_loanId, credit.lender, credit.lastActionBlock);
     }
 
     /* 
@@ -89,8 +95,9 @@ contract Floan {
         require(success, "The transfer of funds failed");
 
         credit.state = State.Withdrawn;
+        credit.lastActionBlock = block.number;
 
-        emit LogLoanWithdrawn(_loanId);
+        emit LoanWithdrawn(_loanId, credit.lastActionBlock);
     }
 
     /* 
@@ -108,8 +115,9 @@ contract Floan {
         require(success, "The transfer of repay amount failed, do you have enough funds?");
 
         credit.state = State.PayedBack;
+        credit.lastActionBlock = block.number;
 
-        emit LogPaybackLoan(_loanId);
+        emit LoanPaidBack(_loanId, credit.lastActionBlock);
     }
 
     /*
@@ -126,11 +134,12 @@ contract Floan {
         require(success, "The transfer of funds failed");
 
         credit.state = State.Closed;
+        credit.lastActionBlock = block.number;
 
-        emit LogClosedLoan(_loanId);
+        emit LoanClosed(_loanId, credit.lastActionBlock);
     }
 
-    // slashDebtor(loanId)
+    // function slashLoan(uint _loanId) public {}
 
     // VIEWER FUNCTIONS
 

@@ -5,6 +5,15 @@ const { ethers } = require("hardhat");
 const ERC20 = require('../artifacts/contracts/Token.sol/Token.json');
 
 
+const FLOAN_STATUSES = {
+    Requested: 0,
+    Funded: 1,
+    Withdrawn: 2,
+    PayedBack: 3,
+    Closed: 4,
+    Slashed: 5,
+};
+
 describe("Floan", () => {
     let FloanContract;
     let floan;
@@ -31,7 +40,46 @@ describe("Floan", () => {
         });
     });
 
+    describe("Request loan", () => {
+        // reminder: amounts are dealt with in wei-like denomination (18 decimal)
+        const AMOUNT = ethers.utils.parseEther('1000').toString();
+        const REPAY_AMOUNT = ethers.utils.parseEther('1100').toString();
+        const ONE_YEAR_IN_DAYS = 365;
+
+        it("Fails when repay amount smaller than initial amount", async () => {
+            await expect(floan.requestLoan(AMOUNT, '1', ONE_YEAR_IN_DAYS)).to.be.revertedWith("The amount to repay can't be smaller than the amount you wish to borrow");
+        });
+
+        it("Fails when duration under 1 day", async () => {
+            await expect(floan.requestLoan(AMOUNT, REPAY_AMOUNT, 0)).to.be.revertedWith("The duration of the loan can't be shorter than one day");
+        });
+
+        it("Last loan id increases between credits", async () => {
+            const prevBlockNb = await ethers.provider.getBlockNumber();
+
+            await expect(floan.requestLoan(AMOUNT, REPAY_AMOUNT, ONE_YEAR_IN_DAYS)).to.emit(floan, "LoanRequested").withArgs(1, owner.address, AMOUNT, REPAY_AMOUNT, ONE_YEAR_IN_DAYS, prevBlockNb + 1);
+            // Hardhat auto-mine is assumed, 1 transaction per block
+            // https://hardhat.org/hardhat-network/explanation/mining-modes.html#mining-modes
+            await expect(floan.requestLoan(AMOUNT, REPAY_AMOUNT, ONE_YEAR_IN_DAYS)).to.emit(floan, "LoanRequested").withArgs(2, owner.address, AMOUNT, REPAY_AMOUNT, ONE_YEAR_IN_DAYS, prevBlockNb + 2);
+        });
+
+        it("Credit sucessfully created with Requested status when all conditions are met", async () => {
+            const prevBlockNb = await ethers.provider.getBlockNumber();
+
+            await expect(floan.requestLoan(AMOUNT, REPAY_AMOUNT, ONE_YEAR_IN_DAYS)).to.emit(floan, "LoanRequested").withArgs(1, owner.address, AMOUNT, REPAY_AMOUNT, ONE_YEAR_IN_DAYS, prevBlockNb +1);
+
+            const credit = await floan.getCredit(1);
+            expect(credit.borrower).to.eq(owner.address);
+            expect(credit.amount).to.eq(AMOUNT);
+            expect(credit.repayAmount).to.eq(REPAY_AMOUNT);
+            expect(credit.durationInDays).to.eq(ONE_YEAR_IN_DAYS);
+            expect(credit.lastActionBlock).to.eq(prevBlockNb + 1);
+            expect(credit.state).to.eq(FLOAN_STATUSES.Requested);
+        });
+    });
+
     describe("Fund loan", () => {
+        // reminder: amounts are dealt with in wei-like denomination (18 decimal)
         const AMOUNT = ethers.utils.parseEther('1000').toString();
         const REPAY_AMOUNT = ethers.utils.parseEther('1100').toString();
         const ONE_YEAR_IN_DAYS = 365;
@@ -75,14 +123,14 @@ describe("Floan", () => {
             const prevBlockNb = await ethers.provider.getBlockNumber();
 
             await expect(floan.connect(alice).fundLoan(1))
-                .to.emit(floan, 'LogFundLoan')
+                .to.emit(floan, 'LoanFunded')
                 .withArgs(1, alice.address, prevBlockNb + 1);
 
             const credit = await floan.getCredit(1);
 
             expect(credit.lender).to.equal(alice.address);
-            expect(credit.state).to.equal(1);
-            expect(credit.startBlock).to.equal(prevBlockNb + 1);
+            expect(credit.state).to.equal(FLOAN_STATUSES.Funded);
+            expect(credit.lastActionBlock).to.equal(prevBlockNb + 1);
         });
     });
 });
