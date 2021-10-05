@@ -5,7 +5,14 @@
 **/coverage
 **.DS_Store
 **.env*
+
 .yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
 
 # Files to ignore in floan-contract
 apps/floan-contract/cache
